@@ -1,22 +1,55 @@
-## General Instructons
+## General Instructions
 
 - File convention: <parent_folder>.<file_name>.ts
 - Keep agents.md and readme.md to update on change project structure
 - Commit small changes using "feat/update/fix/refactor/remove: <short_description>"
 - Push commits is always manual
 
-## Project Instructions
+### NodeJS
 
 - Use src/config for configuration
 - Use src/constants for variables
-- Use src/utils for utilitare code
-- Use src/lib/bedrock for aws resources
-- CLI entry point is src/translate.ts (`yarn translate [inputPath] -l <lang,lang,...> [--source <lang>]`)
+- Use src/utils for utilities code
+- Declare type on top of file
+- Only use typed return when needed
+- Function with more than 2 parameters use an object: sum = (params: sumParams) => {}
 
-## Structure
+### AWS
 
-- src/translate.ts: CLI entry point
-- src/config: config.dotenv.ts, config.bedrock.ts (BedrockRuntimeClient + model id)
-- src/constants: constants.environment.ts, constants.messages.ts, constants.translation.ts
-- src/utils: utils.file.ts (JSON file read/write, output path helper)
-- src/lib/bedrock: bedrock.translate.ts (translate JSON via Bedrock Converse API; values flattened into a single |-separated string to reduce tokens, then rebuilt into the JSON structure)
+- Use src/lib/<bedrock> for aws resources
+
+## Files
+
+<!-- Update with current file paths -->
+
+```
+.
+├── .env.example                # Environment variables example
+├── .github/workflows           # GitHub Actions workflows
+├── readme.md                   # Project README (submodule instructions)
+├── AGENTS.md                   # This file
+├── package.json                # Root package manifest
+├── tsconfig.json               # TypeScript configuration
+├── .prettierrc                 # Prettier configuration
+├── .gitignore                  # Git ignore rules
+├── yarn.lock                   # Lockfile
+├── out/                        # Translated output files (en.json, es.json, pt.json)
+└── src/
+    ├── translate.ts            # Main translation entrypoint
+    ├── config/
+    │   ├── config.dotenv.ts    # Dotenv configuration
+    │   └── config.bedrock.ts   # Bedrock configuration
+    ├── constants/
+    │   ├── constants.environment.ts
+    │   ├── constants.translation.ts
+    │   └── constants.messages.ts
+    ├── lib/
+    │   └── bedrock/
+    │       └── bedrock.translate.ts
+    └── utils/
+        └── utils.file.ts
+```
+
+## Project Instructions
+
+<!-- add more instruction below -->

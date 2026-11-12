@@ -2,7 +2,7 @@
 
 CLI tool that translates a JSON localization file into multiple language files using **Amazon Bedrock** (Claude).
 
-Reads a source JSON file (`out/en.json` by default) and writes one translated JSON file per target language next to it (same directory, same keys).
+Source and target files are configured in `src/constants/constants.translation.ts`: an `originFile` (file path + its language name) and a `targetFiles` array (file paths + their language names to be translated). Each target file is written with the same keys as the origin file.
 
 To minimize tokens, the JSON string values are flattened and sent as a single `|`-separated string, then re-assembled into the JSON structure from the translated segments.
 
@@ -19,7 +19,7 @@ Then run the CLI from your project root:
 
 ```bash
 yarn --cwd aws-website-translator install
-yarn --cwd aws-website-translator translate <your/en.json> -l pt,es
+yarn --cwd aws-website-translator translate
 ```
 
 To update the submodule later:
@@ -31,26 +31,20 @@ git submodule update --remote
 ## Usage
 
 ```bash
-yarn translate [inputPath] -l <lang,lang,...> [--source <lang>]
+yarn translate
 ```
 
-| Flag              | Description                                               | Default       |
-| ----------------- | --------------------------------------------------------- | ------------- |
-| `inputPath`       | Path to the source JSON file                              | `out/en.json` |
-| `-l, --languages` | Target language codes (comma separated or repeated flags) | required      |
-| `-s, --source`    | Source language code                                      | `auto`        |
+No CLI args — the origin file and target files are configured in `src/constants/constants.translation.ts` (languages use full names):
 
-### Examples
+```ts
+export const workdir = 'out';
 
-```bash
-# Translate out/en.json to Spanish and French -> out/es.json, out/fr.json
-yarn translate -l es,fr
+export const originFile = { path: `${workdir}/en.json`, language: 'English' };
 
-# Translate a custom file, auto-detect source language
-yarn translate locales/en.json -l es fr de
-
-# Translate specifying the source language
-yarn translate out/en.json -l es --source en
+export const targetFiles = [
+  { path: `${workdir}/pt.json`, language: 'Portuguese' },
+  { path: `${workdir}/es.json`, language: 'Spanish' },
+];
 ```
 
 ## Configuration
@@ -72,7 +66,7 @@ AWS credentials are resolved from the default credential chain (`aws configure`,
 `.github/workflows/translate.yml` runs automatically when `out/en.json` changes on `main` (or manually via _Run workflow_):
 
 1. Installs dependencies and configures AWS credentials
-2. Runs `yarn translate out/en.json -l pt,es`
+2. Runs `yarn translate`
 3. Commits `out/pt.json` and `out/es.json` to `main`
 
 Required repository secrets (set with `gh secret set <NAME>`, see `.env.example` for the variable names):
@@ -85,9 +79,9 @@ Required repository secrets (set with `gh secret set <NAME>`, see `.env.example`
 
 ## Project structure
 
-- `src/translate.ts` — CLI entry point (arg parsing and orchestration)
+- `src/translate.ts` — CLI entry point (reads `originFile`, loops `targetFiles`)
 - `src/config/` — configuration (`config.dotenv.ts`, `config.bedrock.ts`)
-- `src/constants/` — variables (`constants.environment.ts`, `constants.messages.ts`, `constants.translation.ts`)
+- `src/constants/` — variables (`constants.environment.ts`, `constants.messages.ts`, `constants.translation.ts` with `originFile` + `targetFiles`, prompt builder)
 - `src/utils/` — utility code (`utils.file.ts`)
 - `src/lib/bedrock/` — Bedrock translation (`bedrock.translate.ts`)
 

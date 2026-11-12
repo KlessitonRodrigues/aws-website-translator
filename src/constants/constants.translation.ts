@@ -1,46 +1,37 @@
-export const translationDefaults = {
-  inputPath: 'out/en.json',
-  sourceLanguage: 'auto',
+export type TranslationFile = {
+  path: string;
+  language: string;
 };
 
-export const languageNames: Record<string, string> = {
-  auto: 'auto-detect the source language',
-  en: 'English',
-  es: 'Spanish',
-  fr: 'French',
-  de: 'German',
-  pt: 'Portuguese',
-  it: 'Italian',
-  ja: 'Japanese',
-  zh: 'Chinese',
-  ko: 'Korean',
-  hi: 'Hindi',
-  ar: 'Arabic',
-  ru: 'Russian',
-  nl: 'Dutch',
-  pl: 'Polish',
-  tr: 'Turkish',
-  sv: 'Swedish',
+export type TranslatePromptInput = {
+  values: string;
+  sourceLanguage: string;
+  targetLanguage: string;
+  count: number;
 };
 
-export const getLanguageName = (code: string): string =>
-  languageNames[code] ?? `the language with code '${code}'`;
+export const workdir = 'out';
 
-export const buildTranslatePrompt = (
-  values: string,
-  sourceLanguage: string,
-  targetLanguage: string,
-  count: number,
-): string =>
+export const originFile: TranslationFile = {
+  path: `${workdir}/en.json`,
+  language: 'English',
+};
+
+export const targetFiles: TranslationFile[] = [
+  { path: `${workdir}/pt.json`, language: 'Portuguese' },
+  { path: `${workdir}/es.json`, language: 'Spanish' },
+];
+
+export const buildTranslatePrompt = (params: TranslatePromptInput) =>
   [
-    `Translate each text segment from ${getLanguageName(sourceLanguage)} to ${getLanguageName(targetLanguage)}.`,
-    `The ${count} segments are separated by the | character.`,
+    `Translate each text segment from ${params.sourceLanguage} to ${params.targetLanguage}.`,
+    `The ${params.count} segments are separated by the | character.`,
     'Rules:',
     '- Translate the text only. Do not add or remove segments or separators.',
     '- Do not translate placeholders like {{name}}, {count}, %s, URLs, emails or file paths.',
-    `- Respond with ONLY the ${count} translated segments separated by |, in the same order.`,
+    `- Respond with ONLY the ${params.count} translated segments separated by |, in the same order.`,
     '- No markdown, no code fences, no explanations.',
     '',
     'Segments:',
-    values,
+    params.values,
   ].join('\n');

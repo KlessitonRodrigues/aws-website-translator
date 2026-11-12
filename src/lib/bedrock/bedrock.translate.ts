@@ -4,6 +4,23 @@ import bedrockClient, { bedrockModelId } from '../../config/config.bedrock';
 import { cliMessages } from '../../constants/constants.messages';
 import { buildTranslatePrompt } from '../../constants/constants.translation';
 
+export type BedrockUsage = {
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+};
+
+export type TranslationResult = {
+  translated: Record<string, unknown>;
+  usage: BedrockUsage;
+};
+
+export type TranslateJsonInput = {
+  input: Record<string, unknown>;
+  sourceLanguage: string;
+  targetLanguage: string;
+};
+
 const collectStringValues = (value: unknown): string[] => {
   if (typeof value === 'string') return [value];
   if (typeof value !== 'object' || value === null) return [];
@@ -22,7 +39,7 @@ const rebuildWithValues = (value: unknown, values: string[]): unknown => {
   return rebuilt;
 };
 
-const parseTranslation = (text: string, expectedCount: number): string[] => {
+const parseTranslation = (text: string, expectedCount: number) => {
   const values = text
     .replace(/^```(?:json)?\s*/, '')
     .replace(/```\s*$/, '')
@@ -36,11 +53,9 @@ const parseTranslation = (text: string, expectedCount: number): string[] => {
 };
 
 export const translateJsonWithBedrock = async (
-  input: Record<string, unknown>,
-  sourceLanguage: string,
-  targetLanguage: string,
-): Promise<Record<string, unknown>> => {
-  const values = collectStringValues(input);
+  params: TranslateJsonInput,
+): Promise<TranslationResult> => {
+  const values = collectStringValues(params.input);
 
   const response = await bedrockClient.send(
     new ConverseCommand({
@@ -50,12 +65,12 @@ export const translateJsonWithBedrock = async (
           role: 'user',
           content: [
             {
-              text: buildTranslatePrompt(
-                values.join('|'),
-                sourceLanguage,
-                targetLanguage,
-                values.length,
-              ),
+              text: buildTranslatePrompt({
+                values: values.join('|'),
+                sourceLanguage: params.sourceLanguage,
+                targetLanguage: params.targetLanguage,
+                count: values.length,
+              }),
             },
           ],
         },
@@ -68,6 +83,15 @@ export const translateJsonWithBedrock = async (
     .map(part => ('text' in part ? part.text : ''))
     .join('');
 
+  const usage: BedrockUsage = {
+    inputTokens: response.usage?.inputTokens ?? 0,
+    outputTokens: response.usage?.outputTokens ?? 0,
+    totalTokens: response.usage?.totalTokens ?? 0,
+  };
+
   const translatedValues = parseTranslation(text, values.length);
-  return rebuildWithValues(input, [...translatedValues]) as Record<string, unknown>;
+  return {
+    translated: rebuildWithValues(params.input, [...translatedValues]) as Record<string, unknown>,
+    usage,
+  };
 };

@@ -26,6 +26,3 @@ export const writeJsonObject = (filePath: string, data: Record<string, unknown>)
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n');
 };
-
-export const outputFilePath = (inputPath: string, language: string): string =>
-  path.join(path.dirname(inputPath), `${language}.json`);
