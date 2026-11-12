@@ -25,7 +25,7 @@ const run = async () => {
   const totalUsage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
 
   for (const { path, language } of targetFiles) {
-    const existing = fs.existsSync(path) ? readJsonObject(path) : {};
+    const existing = fs.existsSync(path) ? readJsonObject(path, { allowEmpty: true }) : {};
     const pruned = pruneMissingKeys({ target: existing, source: input });
 
     let result = pruned;

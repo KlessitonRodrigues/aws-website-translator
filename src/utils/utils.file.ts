@@ -3,7 +3,10 @@ import path from 'path';
 
 import { cliMessages } from '../constants/constants.messages';
 
-export const readJsonObject = (filePath: string): Record<string, unknown> => {
+export const readJsonObject = (
+  filePath: string,
+  options: { allowEmpty?: boolean } = {},
+): Record<string, unknown> => {
   if (!fs.existsSync(filePath)) throw new Error(cliMessages.INPUT_FILE_NOT_FOUND);
 
   const content = fs.readFileSync(filePath, 'utf-8');
@@ -17,7 +20,8 @@ export const readJsonObject = (filePath: string): Record<string, unknown> => {
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
     throw new Error(cliMessages.INVALID_JSON_FILE);
   }
-  if (Object.keys(parsed).length === 0) throw new Error(cliMessages.INVALID_JSON_FILE);
+  if (!options.allowEmpty && Object.keys(parsed).length === 0)
+    throw new Error(cliMessages.INVALID_JSON_FILE);
 
   return parsed as Record<string, unknown>;
 };
