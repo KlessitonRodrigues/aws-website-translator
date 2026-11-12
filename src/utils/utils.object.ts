@@ -29,6 +29,27 @@ export const getChangedValues = (params: ChangedValuesParams): JsonObject => {
   return changed;
 };
 
+// Drops keys from target that no longer exist in source (recursively).
+export const pruneMissingKeys = (params: {
+  target: JsonObject;
+  source: JsonObject;
+}): JsonObject => {
+  const pruned: JsonObject = {};
+
+  for (const [key, value] of Object.entries(params.target)) {
+    if (!(key in params.source)) continue;
+    const sourceValue = params.source[key];
+
+    if (isPlainObject(value) && isPlainObject(sourceValue)) {
+      pruned[key] = pruneMissingKeys({ target: value, source: sourceValue });
+    } else {
+      pruned[key] = value;
+    }
+  }
+
+  return pruned;
+};
+
 export const deepMerge = (target: JsonObject, source: JsonObject): JsonObject => {
   const merged: JsonObject = { ...target };
 

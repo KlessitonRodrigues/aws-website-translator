@@ -6,7 +6,7 @@ import { cliMessages } from './constants/constants.messages';
 import { originDiffFile, originFile, targetFiles } from './constants/constants.translation';
 import { translateJsonWithBedrock } from './lib/bedrock/bedrock.translate';
 import { readJsonObject, writeJsonObject } from './utils/utils.file';
-import { deepMerge, getChangedValues } from './utils/utils.object';
+import { deepMerge, getChangedValues, pruneMissingKeys } from './utils/utils.object';
 
 const run = async () => {
   console.log(`${cliMessages.READING_INPUT}: ${originFile.path}`);
@@ -19,31 +19,36 @@ const run = async () => {
   const previous = readJsonObject(originDiffFile.path);
 
   const changed = getChangedValues({ current: input, previous });
-  if (Object.keys(changed).length === 0) {
-    console.log(cliMessages.NO_CHANGES);
-    return;
-  }
+  const hasChanges = Object.keys(changed).length > 0;
+  if (!hasChanges) console.log(cliMessages.NO_CHANGES);
 
   const totalUsage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
 
   for (const { path, language } of targetFiles) {
-    console.log(`${cliMessages.TRANSLATING_TO} '${language}'...`);
-    const { translated, usage } = await translateJsonWithBedrock({
-      input: changed,
-      sourceLanguage: originFile.language,
-      targetLanguage: language,
-    });
     const existing = fs.existsSync(path) ? readJsonObject(path) : {};
-    writeJsonObject(path, deepMerge(existing, translated));
+    const pruned = pruneMissingKeys({ target: existing, source: input });
+
+    let result = pruned;
+    if (hasChanges) {
+      console.log(`${cliMessages.TRANSLATING_TO} '${language}'...`);
+      const { translated, usage } = await translateJsonWithBedrock({
+        input: changed,
+        sourceLanguage: originFile.language,
+        targetLanguage: language,
+      });
+      result = deepMerge(pruned, translated);
+      console.log(
+        `${cliMessages.TOKENS_USED} (${language}): ${usage.totalTokens} ` +
+          `${cliMessages.TOKENS_INPUT} ${usage.inputTokens}, ` +
+          `${cliMessages.TOKENS_OUTPUT} ${usage.outputTokens}`,
+      );
+      totalUsage.inputTokens += usage.inputTokens;
+      totalUsage.outputTokens += usage.outputTokens;
+      totalUsage.totalTokens += usage.totalTokens;
+    }
+
+    writeJsonObject(path, result);
     console.log(`${cliMessages.WROTE_OUTPUT}: ${path}`);
-    console.log(
-      `${cliMessages.TOKENS_USED} (${language}): ${usage.totalTokens} ` +
-        `${cliMessages.TOKENS_INPUT} ${usage.inputTokens}, ` +
-        `${cliMessages.TOKENS_OUTPUT} ${usage.outputTokens}`,
-    );
-    totalUsage.inputTokens += usage.inputTokens;
-    totalUsage.outputTokens += usage.outputTokens;
-    totalUsage.totalTokens += usage.totalTokens;
   }
 
   writeJsonObject(originDiffFile.path, input);

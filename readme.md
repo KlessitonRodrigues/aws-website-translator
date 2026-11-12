@@ -1,10 +1,10 @@
 # aws-website-translator
 
-CLI tool that translates a JSON localization file into multiple language files using **Amazon Bedrock** (Claude).
+CLI tool that translates a JSON localization file into multiple language files using **Amazon Bedrock** (Gemma).
 
 Source and target files are configured in `src/constants/constants.translation.ts`: an `originFile` (file path + its language name) and a `targetFiles` array (file paths + their language names to be translated). Each target file is written with the same keys as the origin file.
 
-To minimize tokens, only the keys changed since the last run are translated. The origin file is snapshotted to `out/en.diff.json` (created if missing); each run diffs `en.json` against that snapshot, sends only the changed values to Bedrock, deep-merges them into the target files, then refreshes the snapshot.
+To minimize tokens, only the keys changed since the last run are translated. The origin file is snapshotted to `out/en.diff.json` (created if missing); each run diffs `en.json` against that snapshot, sends only the changed values to Bedrock, deep-merges them into the target files, then refreshes the snapshot. Keys removed from the origin file are also removed from the target files.
 
 The changed keys are sent to Bedrock as a JSON object, and the model returns a JSON object with the same keys and translated values, which is deep-merged into the target file.
 
