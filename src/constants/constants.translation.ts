@@ -9,14 +9,14 @@ export type TranslatePromptInput = {
   targetLanguage: string;
 };
 
-export const workdir = 'out';
+export const workdir = '../../apps/vite-profile-page/src/public/i18n';
 
 // Max number of changed lines sent to the model per request.
 export const translationChunkSize = 50;
 
 export const originFile: TranslationFile = {
-  path: `${workdir}/en.json`,
-  language: 'English',
+  path: `${workdir}/pt.json`,
+  language: 'Portuguese',
 };
 
 // Snapshot of the origin file from the last successful run, used to detect changed keys.
@@ -26,8 +26,8 @@ export const originDiffFile: TranslationFile = {
 };
 
 export const targetFiles: TranslationFile[] = [
-  { path: `${workdir}/pt.json`, language: 'Portuguese' },
   { path: `${workdir}/es.json`, language: 'Spanish' },
+  { path: `${workdir}/en.json`, language: 'English' },
 ];
 
 export const systemPrompt =

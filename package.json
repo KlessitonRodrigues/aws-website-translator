@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "translate": "ts-node src/translate.ts -l en '../../apps/vite-profile-page/src/public/i18n/pt.json'",
+    "translate": "ts-node src/translate.ts",
     "format": "prettier -c -w ./src"
   },
   "devDependencies": {
