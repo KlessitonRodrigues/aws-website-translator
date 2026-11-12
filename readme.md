@@ -50,6 +50,22 @@ AWS credentials are resolved from the default credential chain (`aws configure`,
 - `src/utils/` — utility code (`utils.file.ts`)
 - `src/lib/bedrock/` — Bedrock translation (`bedrock.translate.ts`)
 
+## Automatic translation (GitHub Actions)
+
+`.github/workflows/translate.yml` runs automatically when `out/en.json` changes on `main` (or manually via *Run workflow*):
+
+1. Installs dependencies and configures AWS credentials
+2. Runs `yarn translate out/en.json -l pt,es`
+3. Commits `out/pt.json` and `out/es.json` to `main`
+
+Required repository secrets:
+
+| Secret | Description |
+| --- | --- |
+| `AWS_ACCESS_KEY_ID` | IAM access key with `bedrock:InvokeModel` on the configured model |
+| `AWS_SECRET_ACCESS_KEY` | Matching secret access key |
+| `AWS_REGION` | Optional, defaults to `us-east-1` |
+
 ## Development
 
 ```bash
