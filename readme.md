@@ -62,7 +62,7 @@ Environment variables (`.env` — see `.env.example`):
 | `AWS_REGION`            | AWS region for Bedrock                               | `us-east-1`                              |
 | `AWS_ACCESS_KEY_ID`     | IAM access key (or use any default-chain credential) | —                                        |
 | `AWS_SECRET_ACCESS_KEY` | Secret access key for the access key above           | —                                        |
-| `BEDROCK_MODEL_ID`      | Bedrock model id                                     | `anthropic.claude-3-haiku-20240307-v1:0` |
+| `BEDROCK_MODEL_ID` | Bedrock model id | `google.gemma-3-27b-it` |
 
 AWS credentials are resolved from the default credential chain (`aws configure`, env vars, SSO, etc.). The caller needs `bedrock:InvokeModel` permission for the configured model.
 
