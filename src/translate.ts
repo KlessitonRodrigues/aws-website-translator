@@ -13,10 +13,10 @@ const run = async () => {
   const input = readJsonObject(originFile.path);
 
   if (!fs.existsSync(originDiffFile.path)) {
-    writeJsonObject(originDiffFile.path, input);
+    writeJsonObject(originDiffFile.path, {});
     console.log(`${cliMessages.CREATED_DIFF}: ${originDiffFile.path}`);
   }
-  const previous = readJsonObject(originDiffFile.path);
+  const previous = readJsonObject(originDiffFile.path, { allowEmpty: true });
 
   const changed = getChangedValues({ current: input, previous });
   const hasChanges = Object.keys(changed).length > 0;
