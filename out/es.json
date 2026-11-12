@@ -1,15 +1,16 @@
 {
-  "pt": "Cargando...",
+  "pt": "Portugués",
   "en": "Inglés",
   "es": "Español",
   "fr": "Francés",
   "loding_title": "Cargando...",
   "sidebar_link_profile": "Perfil",
-  "sidebar_link_cv": "Currículum Vitae",
+  "sidebar_link_cv": "Currículum",
   "sidebar_link_ct": "Certificaciones",
   "sidebar_link_projects": "Proyectos",
   "sidebar_link_settings": "Configuración",
   "sidebar_link_code": "Código",
-  "sidebar_theme_light": "Modo Claro",
-  "sidebar_theme_dark": "Modo Oscuro"
+  "sidebar_theme_light": "Claro",
+  "sidebar_theme_dark": "Oscuro",
+  "header_pdf_btn": "Guardar como PDF"
 }

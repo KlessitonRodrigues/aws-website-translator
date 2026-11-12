@@ -2,7 +2,7 @@ import { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
 
 import bedrockClient, { bedrockModelId } from '../../config/config.bedrock';
 import { cliMessages } from '../../constants/constants.messages';
-import { buildTranslatePrompt } from '../../constants/constants.translation';
+import { buildTranslatePrompt, systemPrompt } from '../../constants/constants.translation';
 
 export type BedrockUsage = {
   inputTokens: number;
@@ -39,16 +39,14 @@ const rebuildWithValues = (value: unknown, values: string[]): unknown => {
   return rebuilt;
 };
 
-const parseTranslation = (text: string, expectedCount: number) => {
+const parseTranslation = (text: string, expectedCount: number): string[] | null => {
   const values = text
     .replace(/^```(?:json)?\s*/, '')
     .replace(/```\s*$/, '')
     .split('|')
     .map(value => value.trim());
 
-  if (expectedCount === 0 || values.length !== expectedCount) {
-    throw new Error(cliMessages.INVALID_TRANSLATION);
-  }
+  if (expectedCount === 0 || values.length !== expectedCount) return null;
   return values;
 };
 
@@ -75,6 +73,7 @@ export const translateJsonWithBedrock = async (
           ],
         },
       ],
+      system: [{ text: systemPrompt }],
       inferenceConfig: { temperature: 0, maxTokens: 4096 },
     }),
   );
@@ -90,6 +89,10 @@ export const translateJsonWithBedrock = async (
   };
 
   const translatedValues = parseTranslation(text, values.length);
+  if (!translatedValues) {
+    console.error(`Raw model response: ${JSON.stringify(text)}`);
+    throw new Error(cliMessages.INVALID_TRANSLATION);
+  }
   return {
     translated: rebuildWithValues(params.input, [...translatedValues]) as Record<string, unknown>,
     usage,

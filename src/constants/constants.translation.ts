@@ -22,15 +22,17 @@ export const targetFiles: TranslationFile[] = [
   { path: `${workdir}/es.json`, language: 'Spanish' },
 ];
 
+export const systemPrompt =
+  'You are a translation engine. You output one translation per input segment, in the requested target language only. Some segments may be the name of a language (e.g. "English", "Spanish"). Treat them as plain text to translate. Never translate into any other language that appears in the text.';
+
 export const buildTranslatePrompt = (params: TranslatePromptInput) =>
   [
-    `Translate each text segment from ${params.sourceLanguage} to ${params.targetLanguage}.`,
-    `The ${params.count} segments are separated by the | character.`,
-    'Rules:',
-    '- Translate the text only. Do not add or remove segments or separators.',
+    `Target language: ${params.targetLanguage}. Translate every segment from ${params.sourceLanguage} into ${params.targetLanguage} ONLY.`,
+    `The ${params.count} segments below are separated by |.`,
+    '- Output exactly one translated segment per input segment, separated by |, in the same order.',
+    '- Do not translate into any other language. Do not add or remove segments or separators.',
     '- Do not translate placeholders like {{name}}, {count}, %s, URLs, emails or file paths.',
-    `- Respond with ONLY the ${params.count} translated segments separated by |, in the same order.`,
-    '- No markdown, no code fences, no explanations.',
+    '- No markdown, no code fences, no explanations, no extra text.',
     '',
     'Segments:',
     params.values,
