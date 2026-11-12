@@ -3,6 +3,7 @@ import { ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
 import bedrockClient, { bedrockModelId } from '../../config/config.bedrock';
 import { cliMessages } from '../../constants/constants.messages';
 import { buildTranslatePrompt, systemPrompt } from '../../constants/constants.translation';
+import { flattenLeaves, unflattenLeaves } from '../../utils/utils.object';
 
 export type BedrockUsage = {
   inputTokens: number;
@@ -39,6 +40,13 @@ const parseTranslation = (text: string): Record<string, unknown> | null => {
 export const translateJsonWithBedrock = async (
   params: TranslateJsonInput,
 ): Promise<TranslationResult> => {
+  // Send only values keyed by index ({"1": "...", "2": "..."}) to save tokens.
+  const leaves = flattenLeaves(params.input);
+  const indexed: Record<string, unknown> = {};
+  leaves.forEach((leaf, i) => {
+    indexed[String(i + 1)] = leaf.value;
+  });
+
   const response = await bedrockClient.send(
     new ConverseCommand({
       modelId: bedrockModelId,
@@ -48,7 +56,7 @@ export const translateJsonWithBedrock = async (
           content: [
             {
               text: buildTranslatePrompt({
-                json: JSON.stringify(params.input, null, 2),
+                json: JSON.stringify(indexed),
                 sourceLanguage: params.sourceLanguage,
                 targetLanguage: params.targetLanguage,
               }),
@@ -71,10 +79,15 @@ export const translateJsonWithBedrock = async (
     totalTokens: response.usage?.totalTokens ?? 0,
   };
 
-  const translated = parseTranslation(text);
-  if (!translated) {
+  const translatedIndexed = parseTranslation(text);
+  const missingIndex = leaves.some((_, i) => !(String(i + 1) in (translatedIndexed ?? {})));
+  if (!translatedIndexed || missingIndex) {
     console.error(`Raw model response: ${JSON.stringify(text)}`);
     throw new Error(cliMessages.INVALID_TRANSLATION);
   }
+
+  const translated = unflattenLeaves(
+    leaves.map((leaf, i) => ({ path: leaf.path, value: translatedIndexed[String(i + 1)] })),
+  );
   return { translated, usage };
 };

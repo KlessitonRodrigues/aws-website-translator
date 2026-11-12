@@ -50,6 +50,43 @@ export const pruneMissingKeys = (params: {
   return pruned;
 };
 
+export type LeafEntry = { path: string[]; value: unknown };
+
+export const chunkArray = <T>(items: T[], size: number): T[][] => {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) chunks.push(items.slice(i, i + size));
+  return chunks;
+};
+
+const collectLeaves = (params: { node: JsonObject; path: string[]; leaves: LeafEntry[] }) => {
+  for (const [key, value] of Object.entries(params.node)) {
+    const path = [...params.path, key];
+    if (isPlainObject(value)) collectLeaves({ node: value, path, leaves: params.leaves });
+    else params.leaves.push({ path, value });
+  }
+  return params.leaves;
+};
+
+// Flattens nested objects into ordered leaf entries (key path + value).
+export const flattenLeaves = (node: JsonObject): LeafEntry[] =>
+  collectLeaves({ node, path: [], leaves: [] });
+
+// Rebuilds a nested object from leaf entries.
+export const unflattenLeaves = (entries: LeafEntry[]): JsonObject => {
+  const result: JsonObject = {};
+
+  for (const { path, value } of entries) {
+    let cursor = result;
+    path.slice(0, -1).forEach(key => {
+      if (!isPlainObject(cursor[key])) cursor[key] = {};
+      cursor = cursor[key] as JsonObject;
+    });
+    cursor[path[path.length - 1]] = value;
+  }
+
+  return result;
+};
+
 export const deepMerge = (target: JsonObject, source: JsonObject): JsonObject => {
   const merged: JsonObject = { ...target };
 

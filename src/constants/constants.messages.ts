@@ -11,6 +11,7 @@ export const cliMessages = {
   TOKENS_INPUT: 'input:',
   TOKENS_OUTPUT: 'output:',
   INVALID_JSON_FILE: 'Input file does not contain a valid JSON object',
+  TRANSLATING_BATCH: 'Translating batch',
   INVALID_TRANSLATION: 'Model returned an invalid JSON translation',
   INPUT_FILE_NOT_FOUND: 'Input file not found',
 };
