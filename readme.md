@@ -6,7 +6,7 @@ Source and target files are configured in `src/constants/constants.translation.t
 
 To minimize tokens, only the keys changed since the last run are translated. The origin file is snapshotted to `out/en.clone.json` (created if missing); each run diffs `en.json` against that clone, sends only the changed values to Bedrock, deep-merges them into the target files, then refreshes the clone.
 
-The JSON string values are flattened and sent as a single `|`-separated string, then re-assembled into the JSON structure from the translated segments.
+The changed keys are sent to Bedrock as a JSON object, and the model returns a JSON object with the same keys and translated values, which is deep-merged into the target file.
 
 ## Add as submodule
 

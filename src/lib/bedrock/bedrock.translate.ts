@@ -21,40 +21,24 @@ export type TranslateJsonInput = {
   targetLanguage: string;
 };
 
-const collectStringValues = (value: unknown): string[] => {
-  if (typeof value === 'string') return [value];
-  if (typeof value !== 'object' || value === null) return [];
-  return Object.values(value).flatMap(collectStringValues);
-};
-
-const rebuildWithValues = (value: unknown, values: string[]): unknown => {
-  if (typeof value === 'string') return values.shift() ?? '';
-  if (typeof value !== 'object' || value === null) return value;
-  if (Array.isArray(value)) return value.map(child => rebuildWithValues(child, values));
-
-  const rebuilt: Record<string, unknown> = {};
-  for (const [key, child] of Object.entries(value)) {
-    rebuilt[key] = rebuildWithValues(child, values);
-  }
-  return rebuilt;
-};
-
-const parseTranslation = (text: string, expectedCount: number): string[] | null => {
-  const values = text
+const parseTranslation = (text: string): Record<string, unknown> | null => {
+  const cleaned = text
+    .trim()
     .replace(/^```(?:json)?\s*/, '')
-    .replace(/```\s*$/, '')
-    .split('|')
-    .map(value => value.trim());
+    .replace(/```\s*$/, '');
 
-  if (expectedCount === 0 || values.length !== expectedCount) return null;
-  return values;
+  try {
+    const parsed: unknown = JSON.parse(cleaned);
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return null;
+    return parsed as Record<string, unknown>;
+  } catch {
+    return null;
+  }
 };
 
 export const translateJsonWithBedrock = async (
   params: TranslateJsonInput,
 ): Promise<TranslationResult> => {
-  const values = collectStringValues(params.input);
-
   const response = await bedrockClient.send(
     new ConverseCommand({
       modelId: bedrockModelId,
@@ -64,10 +48,9 @@ export const translateJsonWithBedrock = async (
           content: [
             {
               text: buildTranslatePrompt({
-                values: values.join('|'),
+                json: JSON.stringify(params.input, null, 2),
                 sourceLanguage: params.sourceLanguage,
                 targetLanguage: params.targetLanguage,
-                count: values.length,
               }),
             },
           ],
@@ -88,13 +71,10 @@ export const translateJsonWithBedrock = async (
     totalTokens: response.usage?.totalTokens ?? 0,
   };
 
-  const translatedValues = parseTranslation(text, values.length);
-  if (!translatedValues) {
+  const translated = parseTranslation(text);
+  if (!translated) {
     console.error(`Raw model response: ${JSON.stringify(text)}`);
     throw new Error(cliMessages.INVALID_TRANSLATION);
   }
-  return {
-    translated: rebuildWithValues(params.input, [...translatedValues]) as Record<string, unknown>,
-    usage,
-  };
+  return { translated, usage };
 };

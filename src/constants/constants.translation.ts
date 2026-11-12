@@ -4,10 +4,9 @@ export type TranslationFile = {
 };
 
 export type TranslatePromptInput = {
-  values: string;
+  json: string;
   sourceLanguage: string;
   targetLanguage: string;
-  count: number;
 };
 
 export const workdir = 'out';
@@ -29,17 +28,16 @@ export const targetFiles: TranslationFile[] = [
 ];
 
 export const systemPrompt =
-  'You are a translation engine. You output one translation per input segment, in the requested target language only. Some segments may be the name of a language (e.g. "English", "Spanish"). Treat them as plain text to translate. Never translate into any other language that appears in the text.';
+  'You are a translation engine. You receive a JSON object and return a JSON object with the same keys and structure, with string values translated into the requested target language only. Some values may be the name of a language (e.g. "English", "Spanish"). Treat them as plain text to translate. Never translate into any other language that appears in the text.';
 
 export const buildTranslatePrompt = (params: TranslatePromptInput) =>
   [
-    `Target language: ${params.targetLanguage}. Translate every segment from ${params.sourceLanguage} into ${params.targetLanguage} ONLY.`,
-    `The ${params.count} segments below are separated by |.`,
-    '- Output exactly one translated segment per input segment, separated by |, in the same order.',
-    '- Do not translate into any other language. Do not add or remove segments or separators.',
+    `Target language: ${params.targetLanguage}. Translate every string value from ${params.sourceLanguage} into ${params.targetLanguage} ONLY.`,
+    '- Return a valid JSON object with exactly the same keys and nesting as the input. Keep keys unchanged.',
+    '- Do not translate into any other language. Do not add or remove keys.',
     '- Do not translate placeholders like {{name}}, {count}, %s, URLs, emails or file paths.',
     '- No markdown, no code fences, no explanations, no extra text.',
     '',
-    'Segments:',
-    params.values,
+    'JSON:',
+    params.json,
   ].join('\n');

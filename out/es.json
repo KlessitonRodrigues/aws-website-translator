@@ -12,5 +12,8 @@
   "sidebar_link_code": "Código",
   "sidebar_theme_light": "Claro",
   "sidebar_theme_dark": "Oscuro",
-  "header_pdf_btn": "Guardar como PDF"
+  "header_pdf_btn": "Guardar como PDF",
+  "header_print_btn": "Imprimir",
+  "header_download_btn": "Descargar",
+  "header_share_btn": "Compartir"
 }
