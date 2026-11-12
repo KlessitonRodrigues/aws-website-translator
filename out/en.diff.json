@@ -15,5 +15,15 @@
   "header_pdf_btn": "Save as PDF",
   "header_print_btn": "Print",
   "header_download_btn": "Download",
-  "header_share_btn": "Share"
+  "header_share_btn": "Share",
+  "header_email_btn": "Email",
+  "header_copy_link_btn": "Copy link",
+  "header_open_btn": "Open",
+  "header_edit_btn": "Edit",
+  "header_preview_btn": "Preview",
+  "header_back_btn": "Back",
+  "header_next_btn": "Next",
+  "header_previous_btn": "Previous",
+  "header_close_btn": "Close",
+  "header_cancel_btn": "Cancel"
 }

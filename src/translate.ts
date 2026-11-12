@@ -3,7 +3,7 @@ import './config/config.dotenv'; // sort-imports-ignore
 import fs from 'fs';
 
 import { cliMessages } from './constants/constants.messages';
-import { originCloneFile, originFile, targetFiles } from './constants/constants.translation';
+import { originDiffFile, originFile, targetFiles } from './constants/constants.translation';
 import { translateJsonWithBedrock } from './lib/bedrock/bedrock.translate';
 import { readJsonObject, writeJsonObject } from './utils/utils.file';
 import { deepMerge, getChangedValues } from './utils/utils.object';
@@ -12,11 +12,11 @@ const run = async () => {
   console.log(`${cliMessages.READING_INPUT}: ${originFile.path}`);
   const input = readJsonObject(originFile.path);
 
-  if (!fs.existsSync(originCloneFile.path)) {
-    writeJsonObject(originCloneFile.path, input);
-    console.log(`${cliMessages.CREATED_CLONE}: ${originCloneFile.path}`);
+  if (!fs.existsSync(originDiffFile.path)) {
+    writeJsonObject(originDiffFile.path, input);
+    console.log(`${cliMessages.CREATED_DIFF}: ${originDiffFile.path}`);
   }
-  const previous = readJsonObject(originCloneFile.path);
+  const previous = readJsonObject(originDiffFile.path);
 
   const changed = getChangedValues({ current: input, previous });
   if (Object.keys(changed).length === 0) {
@@ -46,7 +46,7 @@ const run = async () => {
     totalUsage.totalTokens += usage.totalTokens;
   }
 
-  writeJsonObject(originCloneFile.path, input);
+  writeJsonObject(originDiffFile.path, input);
 
   console.log(
     `${cliMessages.TOKENS_USED}: ${totalUsage.totalTokens} ` +

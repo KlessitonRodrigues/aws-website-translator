@@ -17,8 +17,8 @@ export const originFile: TranslationFile = {
 };
 
 // Snapshot of the origin file from the last successful run, used to detect changed keys.
-export const originCloneFile: TranslationFile = {
-  path: `${workdir}/en.clone.json`,
+export const originDiffFile: TranslationFile = {
+  path: `${workdir}/en.diff.json`,
   language: 'English',
 };
 

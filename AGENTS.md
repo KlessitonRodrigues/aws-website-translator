@@ -33,7 +33,7 @@
 ├── .prettierrc                 # Prettier configuration
 ├── .gitignore                  # Git ignore rules
 ├── yarn.lock                   # Lockfile
-├── out/                        # Translated output files (en.json, en.clone.json, es.json, pt.json)
+├── out/                        # Translated output files (en.json, en.diff.json, es.json, pt.json)
 └── src/
     ├── translate.ts            # Main translation entrypoint
     ├── config/

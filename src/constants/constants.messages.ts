@@ -5,7 +5,7 @@ export const cliMessages = {
   READING_INPUT: 'Reading input file',
   TRANSLATING_TO: 'Translating to',
   WROTE_OUTPUT: 'Wrote',
-  CREATED_CLONE: 'Created origin clone',
+  CREATED_DIFF: 'Created origin diff snapshot',
   NO_CHANGES: 'No changed keys since last run, nothing to translate',
   TOKENS_USED: 'Tokens used',
   TOKENS_INPUT: 'input:',
