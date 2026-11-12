@@ -21,8 +21,8 @@ export const originFile: TranslationFile = {
 
 // Snapshot of the origin file from the last successful run, used to detect changed keys.
 export const originDiffFile: TranslationFile = {
-  path: `${workdir}/en.diff.json`,
-  language: 'English',
+  path: `${workdir}/pt.diff.json`,
+  language: 'Portuguese',
 };
 
 export const targetFiles: TranslationFile[] = [
