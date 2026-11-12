@@ -1,33 +1,21 @@
 {
-  "name": "aws-serveless-json-translator",
+  "name": "aws-website-translator",
+  "version": "0.1.0",
   "private": true,
-  "version": "1.0.0",
-  "repository": "git@github.com:KlessitonRodrigues/aws-serveless-json-translator.git",
-  "author": "klessiton <klessitom@gmail.com>",
-  "license": "MIT",
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
+    "translate": "ts-node src/translate.ts",
+    "format": "prettier -c -w ./src"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/node": "^22.0.0",
+    "dotenv": "^17.3.1",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.9.0"
   },
   "dependencies": {
-    "turbo": "^2.8.13"
-  },
-  "packageManager": "yarn@1.22.22",
-  "workspaces": {
-    "packages": [
-      "apps/*",
-      "services/*"
-    ],
-    "nohoist": [
-      "**/@aws-sdk/**",
-      "**/aws-cdk",
-      "**/aws-cdk/**",
-      "**/aws-cdk-lib",
-      "**/aws-cdk-lib/**",
-      "**/constructs",
-      "**/constructs/**"
-    ]
+    "@aws-sdk/client-bedrock-runtime": "^3.1167.0",
+    "zod": "^4.4.3"
   }
 }
