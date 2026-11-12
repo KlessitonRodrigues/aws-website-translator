@@ -33,7 +33,7 @@
 ├── .prettierrc                 # Prettier configuration
 ├── .gitignore                  # Git ignore rules
 ├── yarn.lock                   # Lockfile
-├── out/                        # Translated output files (en.json, es.json, pt.json)
+├── out/                        # Translated output files (en.json, en.clone.json, es.json, pt.json)
 └── src/
     ├── translate.ts            # Main translation entrypoint
     ├── config/
@@ -47,7 +47,8 @@
     │   └── bedrock/
     │       └── bedrock.translate.ts
     └── utils/
-        └── utils.file.ts
+        ├── utils.file.ts
+        └── utils.object.ts
 ```
 
 ## Project Instructions

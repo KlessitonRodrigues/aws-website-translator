@@ -17,6 +17,12 @@ export const originFile: TranslationFile = {
   language: 'English',
 };
 
+// Snapshot of the origin file from the last successful run, used to detect changed keys.
+export const originCloneFile: TranslationFile = {
+  path: `${workdir}/en.clone.json`,
+  language: 'English',
+};
+
 export const targetFiles: TranslationFile[] = [
   { path: `${workdir}/pt.json`, language: 'Portuguese' },
   { path: `${workdir}/es.json`, language: 'Spanish' },

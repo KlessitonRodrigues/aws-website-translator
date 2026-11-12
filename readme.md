@@ -4,7 +4,9 @@ CLI tool that translates a JSON localization file into multiple language files u
 
 Source and target files are configured in `src/constants/constants.translation.ts`: an `originFile` (file path + its language name) and a `targetFiles` array (file paths + their language names to be translated). Each target file is written with the same keys as the origin file.
 
-To minimize tokens, the JSON string values are flattened and sent as a single `|`-separated string, then re-assembled into the JSON structure from the translated segments.
+To minimize tokens, only the keys changed since the last run are translated. The origin file is snapshotted to `out/en.clone.json` (created if missing); each run diffs `en.json` against that clone, sends only the changed values to Bedrock, deep-merges them into the target files, then refreshes the clone.
+
+The JSON string values are flattened and sent as a single `|`-separated string, then re-assembled into the JSON structure from the translated segments.
 
 ## Add as submodule
 
@@ -82,7 +84,7 @@ Required repository secrets (set with `gh secret set <NAME>`, see `.env.example`
 - `src/translate.ts` — CLI entry point (reads `originFile`, loops `targetFiles`)
 - `src/config/` — configuration (`config.dotenv.ts`, `config.bedrock.ts`)
 - `src/constants/` — variables (`constants.environment.ts`, `constants.messages.ts`, `constants.translation.ts` with `originFile` + `targetFiles`, prompt builder)
-- `src/utils/` — utility code (`utils.file.ts`)
+- `src/utils/` — utility code (`utils.file.ts`, `utils.object.ts` for diff/merge)
 - `src/lib/bedrock/` — Bedrock translation (`bedrock.translate.ts`)
 
 ## Development
