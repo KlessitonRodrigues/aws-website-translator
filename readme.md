@@ -57,12 +57,13 @@ yarn translate out/en.json -l es --source en
 
 Environment variables (`.env` — see `.env.example`):
 
-| Variable                | Description                                          | Default                                  |
-| ----------------------- | ---------------------------------------------------- | ---------------------------------------- |
-| `AWS_REGION`            | AWS region for Bedrock                               | `us-east-1`                              |
-| `AWS_ACCESS_KEY_ID`     | IAM access key (or use any default-chain credential) | —                                        |
-| `AWS_SECRET_ACCESS_KEY` | Secret access key for the access key above           | —                                        |
-| `BEDROCK_MODEL_ID` | Bedrock model id | `google.gemma-3-27b-it` |
+| Variable                   | Description                                          | Default                 |
+| -------------------------- | ---------------------------------------------------- | ----------------------- |
+| `AWS_REGION`               | AWS region for Bedrock                               | `us-east-1`             |
+| `AWS_ACCESS_KEY_ID`        | IAM access key (or use any default-chain credential) | —                       |
+| `AWS_SECRET_ACCESS_KEY`    | Secret access key for the access key above           | —                       |
+| `BEDROCK_MODEL_ID`         | Bedrock model id                                     | `google.gemma-3-12b-it` |
+| `AWS_BEARER_TOKEN_BEDROCK` | Bearer token for Bedrock authentication              | —                       |
 
 AWS credentials are resolved from the default credential chain (`aws configure`, env vars, SSO, etc.). The caller needs `bedrock:InvokeModel` permission for the configured model.
 
