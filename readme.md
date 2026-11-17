@@ -8,6 +8,8 @@ To minimize tokens, only the keys changed since the last run are translated. The
 
 The changed keys are sent to Bedrock as a JSON object, and the model returns a JSON object with the same keys and translated values, which is deep-merged into the target file.
 
+![Data flow & services diagram](diagram.svg)
+
 ## Add as submodule
 
 Add this repository as a submodule of another project using the HTTPS link:

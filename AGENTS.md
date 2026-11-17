@@ -33,6 +33,7 @@
 ├── .prettierrc                 # Prettier configuration
 ├── .gitignore                  # Git ignore rules
 ├── yarn.lock                   # Lockfile
+├── diagram.svg                 # Data flow & services diagram (shown in readme)
 ├── out/                        # Translated output files (en.json, en.diff.json, es.json, pt.json)
 └── src/
     ├── translate.ts            # Main translation entrypoint
